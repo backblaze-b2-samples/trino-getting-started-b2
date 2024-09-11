@@ -1,24 +1,12 @@
-# Trino Getting Started
+# Getting Started with Trino and Backblaze B2
 
-Welcome to the [Trino](https://trino.io/) getting started tutorial repository. 
+Welcome to the Getting Started with [Trino](https://trino.io/) and [Backblaze B2](https://www.backblaze.com/cloud-storage) tutorial repository. Currently, this repository contains the `trino-b2` environment that, until recently, lived in the main [`trino-getting-started`](https://github.com/bitsondatadev/trino-getting-started) repository. We anticipate adding more environments showing different aspects of integrating Trino with Backblaze B2; for example, an [Apache Iceberg](https://iceberg.apache.org/) example along the lines of [`trino-iceberg-minio`](https://github.com/bitsondatadev/trino-getting-started/tree/main/iceberg/trino-iceberg-minio).
+
 This is a home for a set of preconfigured [Docker Compose](https://docs.docker.com/compose/) 
 environments that are used to set up simple environments and showcase basic 
 configurations in isolation to get new and existing users started on all the 
 different containers we have, and more importantly learn and have fun with 
-Trino.
-
-If you're entirely new to Trino, you're not alone. Trino is a distributed SQL 
-query engine designed to query large data sets distributed over one or more 
-heterogeneous data sources. Check out some of our [use cases](https://trino.io/docs/current/overview/use-cases.html) 
-to understand what Trino is and is not.  We also have a rascally little bunny 
-mascot named 
-[Commander Bun Bun](https://twitter.com/trinodb/status/1357416368543588356) 🐇.
-
-Another thing to know about Trino is that it was originally called Presto® SQL 
-and it shares the first 7 years of code with the well known Presto® DB. Trino
-houses the four original creators of Presto® and the majority code contributors
-of both Presto® and Trino. You can read more about why this split happened 
-[in the Trino rebrand blog](https://trino.io/blog/2020/12/27/announcing-trino.html).
+Trino and B2.
 
 ## Prerequisites
 
