@@ -1,12 +1,14 @@
+![Trino and Backblaze B2](./assets/bb-bh-Storing-and-Querying-Analytical-Data-in-Backblaze-B2_DesignA1.png)
+
 # Getting Started with Trino and Backblaze B2
 
-Welcome to the Getting Started with [Trino](https://trino.io/) and [Backblaze B2](https://www.backblaze.com/cloud-storage) tutorial repository. Currently, this repository contains the `trino-b2` environment that, until recently, lived in the main [`trino-getting-started`](https://github.com/bitsondatadev/trino-getting-started) repository. We anticipate adding more environments showing different aspects of integrating Trino with Backblaze B2; for example, an [Apache Iceberg](https://iceberg.apache.org/) example along the lines of [`trino-iceberg-minio`](https://github.com/bitsondatadev/trino-getting-started/tree/main/iceberg/trino-iceberg-minio).
+Welcome to the Getting Started with [Trino](https://trino.io/) and [Backblaze B2 Cloud Storage](https://www.backblaze.com/cloud-storage) tutorial repository!
 
-This is a home for a set of preconfigured [Docker Compose](https://docs.docker.com/compose/) 
-environments that are used to set up simple environments and showcase basic 
-configurations in isolation to get new and existing users started on all the 
-different containers we have, and more importantly learn and have fun with 
-Trino and B2.
+Currently, this repository contains two tutorials with preconfigured [Docker Compose](https://docs.docker.com/compose/) environments:
+* [`trino-b2`](hive/trino-b2), which until recently lived in the main [`trino-getting-started`](https://github.com/bitsondatadev/trino-getting-started) repository, shows how to configure Trino to use Backblaze B2 for file storage. 
+* [`trino-iceberg-hive-b2`](iceberg/trino-iceberg-hive-b2), based on [`trino-iceberg-minio`](https://github.com/bitsondatadev/trino-getting-started/tree/main/iceberg/trino-iceberg-minio), shows how to configure Trino to use the [Apache Iceberg](https://iceberg.apache.org/) table format, using the Hive metastore for table metadata and Backblaze B2 for file storage.
+
+We anticipate adding more environments showing different aspects of integrating Trino with Backblaze B2, for example, using the Iceberg table format with the [Iceberg REST catalog](https://trino.io/docs/current/object-storage/metastores.html#rest-catalog) rather than the Hive metastore.
 
 ## Prerequisites
 
