@@ -44,9 +44,5 @@
         <name>fs.s3a.endpoint</name>
         <value>ENDPOINT</value>
     </property>
-    <property>
-        <name>fs.s3a.path.style.access</name>
-        <value>true</value>
-    </property>
 
 </configuration>
