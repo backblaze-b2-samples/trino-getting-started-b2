@@ -12,23 +12,23 @@ We anticipate adding more environments showing different aspects of integrating 
 
 ## Prerequisites
 
-In order to use this repository you need to have [Docker](https://www.docker.com/why-docker) installed to run your service [containers](https://www.docker.com/why-docker). Check if you have Docker installed by running `docker --version`. If Docker isn't found, please refer to the [install insructions](https://docs.docker.com/engine/install/) and install Docker before trying to run these tutorials. If you're on mac or windows, you will just need to install docker desktop. If you're on a linux distribution, you will just need to install the docker engine.
+In order to use this repository you need to have [Docker](https://www.docker.com/why-docker) installed to run your service [containers](https://www.docker.com/why-docker). Check if you have Docker installed by running `docker --version`. If Docker isn't found, please install Docker before trying to run these tutorials. If you're on macOS, Linux or Windows, you can install [Docker Desktop](https://www.docker.com/products/docker-desktop/). Alternatively, if you're on Linux, you can install the [Docker Engine](https://docs.docker.com/engine/).
 
 ## Layout
 
-The first level of directories in this repo are generally organized by [connector](https://trino.io/docs/current/connector.html). Concepts such as security, clients, or basics will have their own directory as well. The second level of directories contain the actual environment and tutorial directories themselves. In order to run the environment, you need to be in one of these directories that have a docker-compose.yml file in it. The second level of directories contain the actual environment and tutorial directories themselves. In order to run the environment, you need to be in one of these directories that have a docker-compose.yml file in it.
+The first level of directories in this repo are generally organized by [connector](https://trino.io/docs/current/connector.html). The second level of directories contain the actual environment and documents. In order to run the environment, you need to be in one of the directories that has a `docker-compose.yml` file in it.
 
 ## Helpful Docker commands
 
-### Start Service
+### Start Services
 
 `docker compose up -d`
 
-### Stop Service
+### Stop Services
 
 `docker compose stop`
 
-### Clean Service
+### Clean Services
 
 [cleans images, containers, and network](shttps://docs.docker.com/config/pruning/)
 
@@ -58,4 +58,4 @@ The first level of directories in this repo are generally organized by [connecto
 
 `docker compose ps`
 
-See trademark and other [legal notices](https://trino.io/legal.html).
+[Trino trademark and other legal notices](https://trino.io/legal.html).
