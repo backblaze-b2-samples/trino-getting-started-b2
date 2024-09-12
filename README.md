@@ -30,11 +30,11 @@ The first level of directories in this repo are generally organized by [connecto
 
 ### Clean Services
 
-[cleans images, containers, and network](shttps://docs.docker.com/config/pruning/)
+[cleans images, containers, and network](https://docs.docker.com/config/pruning/)
 
 `docker system prune --all --force`
 
-[cleans volumes](shttps://docs.docker.com/config/pruning/)
+[cleans volumes](https://docs.docker.com/config/pruning/)
 
 `docker volume prune --force`
 

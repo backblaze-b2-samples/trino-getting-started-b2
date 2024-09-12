@@ -1,6 +1,6 @@
 # Iceberg with the Hive Connector and Backblaze B2 Cloud Storage
 
-This tutorial shows how to use Trino and the [Apache Iceberg](https://iceberg.apache.org/) table format, using the Hive metastore for table metadata and [Backblaze B2 Cloud Storage](https://www.backblaze.com/cloud-storage) for file storage. The [DML operations on Iceberg using Trino](dml-operations-on-iceberg-using-trino) section is closely based on the demo in [Trino Community Broadcast
+This tutorial shows how to use Trino and the [Apache Iceberg](https://iceberg.apache.org/) table format, using the Hive metastore for table metadata and [Backblaze B2 Cloud Storage](https://www.backblaze.com/cloud-storage) for file storage. The [Perform DML Operations with Iceberg on Trino](#perform-dml-operations-with-iceberg-on-trino) section is closely based on the demo in [Trino Community Broadcast
 40: Trino's cold as Iceberg!](https://trino.io/episodes/40.html) 
 
 ## Create a Backblaze Account
