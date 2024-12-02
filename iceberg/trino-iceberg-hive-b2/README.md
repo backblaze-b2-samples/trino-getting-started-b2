@@ -1,4 +1,4 @@
-# Iceberg with the Hive Connector and Backblaze B2 Cloud Storage
+# Iceberg with the Hive Metastore and Backblaze B2 Cloud Storage
 
 This tutorial shows how to use Trino and the [Apache Iceberg](https://iceberg.apache.org/) table format, using the Hive metastore for table metadata and [Backblaze B2 Cloud Storage](https://www.backblaze.com/cloud-storage) for file storage. The [Perform DML Operations with Iceberg on Trino](#perform-dml-operations-with-iceberg-on-trino) section is closely based on the demo in [Trino Community Broadcast
 40: Trino's cold as Iceberg!](https://trino.io/episodes/40.html) 
@@ -34,13 +34,13 @@ Click **Create a Bucket** and give the bucket a name. We're using `trino-iceberg
 
 Leave the remaining settings with their defaults and click **Create a Bucket**.
 
-Make a note of the endpoint value in the bucket details; you'll need that to configure Trino in a moment.
+Make a note of the endpoint value in the bucket details; you'll need that to configure Trino in a moment. The region is the second part of the endpoint - for example, in the endpoint `s3.us-west-004.backblazeb2.com`, the region is `us-west-004`. Note that you must use the full `https` URL for `ENDPOINT`; for example, `https://s3.us-west-004.backblazeb2.com`.
 
 <img src="../../hive/trino-b2/assets/bucket_endpoint.png" alt="Bucket Endpoint" width="800">
 
 ## Create an Application Key in Backblaze B2
 
-Now you have a bucket in Backblaze B2, you have to create an application key that Trino's Hive connector can use to access it. In the menu on the left, under **Account**, click **App Keys**, then click **Add a New Application Key**.
+Now you have a bucket in Backblaze B2, you have to create an application key that Trino's Iceberg connector can use to access it. In the menu on the left, under **Account**, click **App Keys**, then click **Add a New Application Key**.
 
 It's good practice to limit a key to access a single bucket if you can, so give the key a name, again, we're using `trino-iceberg` as an example, and select the bucket you created in the **Allow Access to Bucket(s)** dropdown. Many tools require the ability to list all of the buckets in an account, even if they will only be using a single bucket, so enable **Allow List All Bucket Names**. Leave the remaining settings with their defaults and click **Create New Key**.
 
@@ -52,20 +52,20 @@ It's good practice to limit a key to access a single bucket if you can, so give 
 
 ## Configure Trino
 
-We need to configure Trino's Hive Connector to access the bucket in Backblaze B2. There are several edits across four configuration files, so, before you start, ensure you have the required information to hand. The configuration files contain the following placeholders:
+We need to configure both Trino's Iceberg Connector and the Hive metastore to access the bucket in Backblaze B2. There are several edits across three configuration files, so, before you start, ensure you have the required information to hand. The configuration files contain the following placeholders:
 
 * `BUCKET_NAME`
 * `APPLICATION_KEY`
 * `KEY_ID`
 * `ENDPOINT`
+* `REGION`
 
-`BUCKET_NAME` is simply the name of the bucket you created; you should have a note of `APPLICATION_KEY`, `KEY_ID` and `ENDPOINT` from creating the bucket and application key earlier.
+`BUCKET_NAME` is simply the name of the bucket you created; you should have a note of `APPLICATION_KEY`, `KEY_ID`, `ENDPOINT` and `REGION` from creating the bucket and application key earlier.
 
 Edit each of the following three files and replace the placeholders with your values:
 
 * `conf/core-site.xml`
 * `conf/metastore-site.xml`
-* `etc/catalog/hive.properties`
 * `etc/catalog/iceberg.properties`
 
 For example, in `conf/core-site.xml`, the first edit is to change `BUCKET_NAME` to the name of your bucket. i.e. change

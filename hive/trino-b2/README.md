@@ -107,7 +107,7 @@ Click **Create a Bucket** and give the bucket a name. We're using `trino-tiny` i
 
 Leave the remaining settings with their defaults and click **Create a Bucket**. 
 
-Make a note of the endpoint value in the bucket details; you'll need that to configure Trino in a moment.
+Make a note of the endpoint value in the bucket details; you'll need that to configure Trino in a moment. The region is the second part of the endpoint - for example, in the endpoint `s3.us-west-004.backblazeb2.com`, the region is `us-west-004`.
 
 <img src="./assets/bucket_endpoint.png" alt="Bucket Endpoint" width="800">
 
@@ -131,8 +131,9 @@ We need to configure Trino's Hive Connector to access the bucket in Backblaze B2
 * `APPLICATION_KEY`  
 * `KEY_ID`
 * `ENDPOINT`
+* `REGION`
 
-`BUCKET_NAME` is simply the name of the bucket you created; you should have a note of `APPLICATION_KEY`, `KEY_ID` and `ENDPOINT` from creating the bucket and application key earlier.
+`BUCKET_NAME` is simply the name of the bucket you created; you should have a note of `APPLICATION_KEY`, `KEY_ID`, `ENDPOINT` and `REGION` from creating the bucket and application key earlier. Note that you must use the full `https` URL for `ENDPOINT`; for example, `https://s3.us-west-004.backblazeb2.com`.
 
 Edit each of the following three files and replace the placeholders with your values:
 
@@ -457,7 +458,8 @@ To access the Drive Stats data set via Trino, [start Trino as explained above](#
 * `BUCKET_NAME`: `drivestats-parquet`
 * `APPLICATION_KEY`: `K004cogT4GIeHHfhCyPPLsPBT4NyY1A`
 * `KEY_ID`: `0045f0571db506a0000000007`
-* `ENDPOINT`: `s3.us-west-004.backblazeb2.com`
+* `ENDPOINT`: `https://s3.us-west-004.backblazeb2.com`
+* `REGION`: `us-west-004`
 
 Run the following command to load the [Drive Stats schema](etc/drivestats.sql) into Trino's metastore:
 
