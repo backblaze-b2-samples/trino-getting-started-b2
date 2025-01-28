@@ -3,6 +3,8 @@
 This tutorial shows how to use Trino and the [Apache Iceberg](https://iceberg.apache.org/) table format, using the Hive metastore for table metadata and [Backblaze B2 Cloud Storage](https://www.backblaze.com/cloud-storage) for file storage. The [Perform DML Operations with Iceberg on Trino](#perform-dml-operations-with-iceberg-on-trino) section is closely based on the demo in [Trino Community Broadcast
 40: Trino's cold as Iceberg!](https://trino.io/episodes/40.html) 
 
+You'll also learn how to run SQL queries against the real-world [Backblaze Drive Stats](https://www.backblaze.com/b2/hard-drive-test-data.html) public data set.
+
 ## Create a Backblaze Account
 
 If you already have a Backblaze account with B2 enabled, you can skip to the next section.
@@ -52,28 +54,26 @@ It's good practice to limit a key to access a single bucket if you can, so give 
 
 ## Configure Trino
 
-We need to configure both Trino's Iceberg Connector and the Hive metastore to access the bucket in Backblaze B2. There are several edits across three configuration files, so, before you start, ensure you have the required information to hand. The configuration files contain the following placeholders:
+We need to configure both Trino's Iceberg Connector and the Hive metastore to access the bucket in Backblaze B2. There are several edits across two configuration files, so, before you start, ensure you have the required information to hand. The configuration files contain the following placeholders:
 
-* `BUCKET_NAME`
 * `APPLICATION_KEY`
 * `KEY_ID`
 * `ENDPOINT`
 * `REGION`
 
-`BUCKET_NAME` is simply the name of the bucket you created; you should have a note of `APPLICATION_KEY`, `KEY_ID`, `ENDPOINT` and `REGION` from creating the bucket and application key earlier.
+You should have a note of `APPLICATION_KEY`, `KEY_ID`, `ENDPOINT` and `REGION` from creating the bucket and application key earlier.
 
-Edit each of the following three files and replace the placeholders with your values:
+Edit each of the following two files and replace the placeholders with your values:
 
 * `conf/core-site.xml`
-* `conf/metastore-site.xml`
 * `etc/catalog/iceberg.properties`
 
-For example, in `conf/core-site.xml`, the first edit is to change `BUCKET_NAME` to the name of your bucket. i.e. change
+For example, in `conf/core-site.xml`, the first edit is to change `ENDPOINT` to your bucket's endpoint. i.e. change
 
 ```xml
     <property>
-        <name>fs.defaultFS</name>
-        <value>s3a://BUCKET_NAME</value>
+        <name>fs.s3a.endpoint</name>
+        <value>ENDPOINT</value>
     </property>
 ```
 
@@ -81,12 +81,12 @@ to
 
 ```xml
     <property>
-        <name>fs.defaultFS</name>
-        <value>s3a://trino-iceberg</value>
+        <name>fs.s3a.endpoint</name>
+        <value>s3.us-west-004.backblazeb2.com</value>
     </property>
 ```
 
-replacing `trino-iceberg` with the name of your bucket.
+replacing `s3.us-west-004.backblazeb2.com` with your bucket's endpoint if necessary.
 
 Once you've completed editing the configuration files, make sure you save them!
 
@@ -353,3 +353,103 @@ By default, dropping the tables in Trino does not delete the underlying metadata
 You can delete all of the files by selecting them all, then hitting the 'delete' button:
 
 <img src="./assets/iceberg_files_select_delete.png" alt="Files selected for deletion" width="800">
+
+## Accessing the Backblaze Drive Stats Data Set
+
+[Drive Stats](https://www.backblaze.com/b2/hard-drive-test-data.html) is a public data set of the daily metrics on the hard drives in Backblaze’s cloud storage infrastructure that Backblaze has open-sourced starting with April 2013. Currently, Drive Stats comprises over 564 million records, rising by over 300,000 records per day. Drive Stats is an append-only dataset effectively logging daily statistics that once written are never updated or deleted.
+
+Each day, Backblaze collects a Drive Stats record from each hard drive containing some or all the following fields:
+
+* **date**: the date of collection.
+* **serial_number**: the unique serial number of the drive.
+* **model**: the manufacturer’s model number of the drive.
+* **capacity_bytes**: the drive’s capacity, in bytes.
+* **failure**: 1 if this was the last day that the drive was operational before failing, 0 if all is well.
+* **datacenter**: the data center containing the drive; currently one of `ams5` (Amsterdam, Netherlands), `iad1` (Reston, VA), `phx1` (Phoenix, AZ), `sac0` (Sacramento, CA), `sac2` (Stockton, CA), or an empty string.
+* **cluster_id**: the cluster containing the drive; currently one of  `0`, `20`, `31`, `40`, `50`, `52`.
+* **vault_id**: the vault containing the drive; four digits, for example, `1042`.
+* **pod_id**: the identifier of the drive's pod within its vault; an integer between 1 and 20 inclusive.
+* **pod_slot_num**: the drive's slot within its pod; an integer between 1 and 59 inclusive. May be NULL.
+* **is_legacy_format**: for future use; currently always 0.
+* **A collection of [SMART](https://www.backblaze.com/blog/what-smart-stats-indicate-hard-drive-failures/) attributes**. The number of attributes collected has risen over time; currently we store 87 SMART attributes in each record, each one in both raw and normalized form, with field names of the form smart_n_normalized and smart_n_raw, where n is between 1 and 255.
+
+The `vault_id`, `pod_id`, and `is_legacy_format` fields were introduced in Q2 2023 and are explained further in [Backblaze Drive Stats for Q2 2023](https://www.backblaze.com/blog/backblaze-drive-stats-for-q2-2023/), while `datacenter`, `cluster_id` and `pod_slot_num` appeared in Q3 2023 and are covered in [Backblaze Drive Stats for Q3 2023](https://www.backblaze.com/blog/backblaze-drive-stats-for-q3-2023/). These fields are `NULL` in records created before their introduction.
+
+In total, each record currently comprises 195 data fields describing the location and state of an individual hard drive on a given day (the number of SMART attributes collected has risen over time).
+
+The entire Backblaze Drive Stats data set is available in Iceberg/Parquet format in a public Backblaze B2 bucket. At the time of writing, the data set comprises 200 files occupying 21.7 GiB of storage.
+
+To access the Drive Stats data set via Trino, follow the [instructions above for configuring Trino](#configuring-trino), with the following configuration values:
+
+* `APPLICATION_KEY`: `K004Fs/bgmTk5dgo6GAVm2Waj3Ka+TE`
+* `KEY_ID`: `0045f0571db506a0000000017`
+* `ENDPOINT`: `https://s3.us-west-004.backblazeb2.com`
+* `REGION`: `us-west-004`
+
+Now start the containers:
+
+```
+docker compose up -d
+```
+
+Once the containers have started, run the following command to load the [Drive Stats schema](etc/drivestats.sql) into Trino's metastore:
+
+```
+docker container exec -it trino-iceberg-hive-b2-trino-coordinator-1 trino -f /etc/trino/drivestats.sql
+```
+
+Now open the CLI, setting the default catalog and schema:
+
+```
+docker container exec -it trino-iceberg-hive-b2-trino-coordinator-1 trino --catalog iceberg --schema drivestats
+```
+
+Here are some sample queries to get you started:
+
+#### How many records are in the current Drive Stats data set?
+```sql
+SELECT COUNT(*) 
+FROM drivestats;
+```
+
+#### How many hard drives was Backblaze spinning on a given date?
+```sql
+SELECT COUNT(*) 
+FROM drivestats 
+WHERE date = DATE '2024-12-31';
+```
+
+#### How many exabytes of raw storage was Backblaze managing on a given date?
+```sql
+SELECT ROUND(SUM(CAST(capacity_bytes AS bigint))/1e+18, 2) 
+FROM drivestats 
+WHERE date = DATE '2024-12-31';
+```
+
+#### What are the top 10 most common drive models in the data set?
+```sql
+SELECT model, COUNT(DISTINCT serial_number) AS count 
+FROM drivestats 
+GROUP BY model
+ORDER BY count DESC
+LIMIT 10;
+```
+
+#### How many drives were in the various Backblaze data centers on a given date?
+```sql
+SELECT datacenter, COUNT(*) AS count
+FROM drivestats
+WHERE date = DATE '2024-12-31'
+GROUP BY datacenter;
+```
+
+You can learn more about querying the Drive Stats data set from [Querying a Decade of Drive Stats Data](http://linktbd).
+
+### Stopping Services
+
+Once you're done, the resources used for this exercise can be released
+by running the following command:
+
+```
+docker compose down
+```
