@@ -1,6 +1,21 @@
 # Hive Connector over Backblaze B2 Cloud Storage
 
-This tutorial is closely based on the [trino-minio](../trino-minio) tutorial by [bitsondatadev](/bitsondatadev). In this version of the tutorial, you will configure Trino to use [Backblaze B2 Cloud Storage](https://www.backblaze.com/b2/cloud-storage.html) for file storage.
+This tutorial is closely based on the [trino-minio](https://github.com/bitsondatadev/trino-getting-started/hive/trino-minio) tutorial by [bitsondatadev](/bitsondatadev). In this version of the tutorial, you will configure Trino to use [Backblaze B2 Cloud Storage](https://www.backblaze.com/b2/cloud-storage.html) for file storage.
+
+## Contents
+
+* [Introduction](#introduction-)
+* [Goals](#goals)
+* [Running Services](#running-services)
+* [Open Trino CLI](#open-trino-cli)
+* [Create a Backblaze Account](#create-a-backblaze-account)
+* [Create a Bucket in Backblaze B2](#create-a-bucket-in-backblaze-b2)
+* [Create an Application Key in Backblaze B2](#create-an-application-key-in-backblaze-b2)
+* [Configuring Trino](#configuring-trino)
+* [Querying Trino](#querying-trino)
+* [Exploring the Hive Metastore](#exploring-the-hive-metastore)
+* [Accessing the Backblaze Drive Stats Data Set](#accessing-the-backblaze-drive-stats-data-set)
+* [Stopping Services](#stopping-services)
 
 ## Introduction 
 If you are new to Trino or Presto®, I recommend that you check out the following
@@ -14,9 +29,7 @@ In this tutorial, you will:
  3. Dive into the relational database that contains the Hive model and metadata that is stored in the Hive metastore service.
  4. Run SQL queries against the real-world [Backblaze Drive Stats](https://www.backblaze.com/b2/hard-drive-test-data.html) public data set.
 
-## Steps
-
-### Running Services
+## Running Services
 
 First, you want to start the services. Make sure that you are in the 
 `trino-getting-started/hive/trino-b2` directory. Now run the following
@@ -38,7 +51,7 @@ the Docker images before you see the "done" message):
  ✔ Container trino-b2-hive-metastore-1     Started  0.7s
 ```
 
-### Open Trino CLI
+## Open Trino CLI
 
 Once this is complete, you can log into the Trino coordinator node. We will
 do this by using the [`exec`](https://docs.docker.com/engine/reference/commandline/exec/)
@@ -72,7 +85,9 @@ You should see that the b2 catalog is registered. This is actually a Hive
 connector configured under the name `b2` to delineate the underlying storage
 we are using.
 
-### Create a Backblaze Account
+## Create a Backblaze Account
+
+If you do not yet have a Backblaze account, navigate to the [Backblaze B2 signup page](https://www.backblaze.com/b2/sign-up.html?referrer=nopref), enter your email address and a password, and click **Sign Up for Backblaze B2**. Your account includes 10 GB of storage free of charge, and you don't need to submit any credit card details until you need more.
 
 If you already have a Backblaze account with B2 enabled, you can skip to the next section.
 
@@ -83,9 +98,7 @@ If you have a Backblaze account, but you don't see the **B2 Cloud Storage** menu
 
 The page will refresh and you will see the B2 Cloud Storage menu on the left.
 
-If you do not yet have a Backblaze account, navigate to the [Backblaze B2 signup page](https://www.backblaze.com/b2/sign-up.html?referrer=nopref), enter your email address and a password, and click **Sign Up for Backblaze B2**. Your account includes 10 GB of storage free of charge, and you don't need to submit any credit card details until you need more.
-
-### Create a Bucket in Backblaze B2
+## Create a Bucket in Backblaze B2
 
 If we look at the Trino Architecture, we're first going to prep the file storage
 where the actual data will reside. In earlier iterations of big data systems,
@@ -111,7 +124,7 @@ Make a note of the endpoint value in the bucket details; you'll need that to con
 
 <img src="./assets/bucket_endpoint.png" alt="Bucket Endpoint" width="800">
 
-### Create an Application Key in Backblaze B2
+## Create an Application Key in Backblaze B2
 
 Now you have a bucket in Backblaze B2, you have to create an application key that Trino's Hive connector can use to access it. In the menu on the left, under **Account**, click **App Keys**, then click **Add a New Application Key**.
 
@@ -123,7 +136,7 @@ It's good practice to limit a key to access a single bucket if you can, so give 
 
 <img src="./assets/application_key.png" alt="Application Key" width="500">
 
-### Configuring Trino
+## Configuring Trino
 
 We need to configure Trino's Hive Connector to access the bucket in Backblaze B2. There are several edits across three configuration files, so, before you start, ensure you have the required information to hand. The configuration files contain the following placeholders:
 
@@ -173,7 +186,7 @@ You will also need to restart the Trino CLI:
 docker container exec -it trino-b2-trino-coordinator-1 trino
 ```
 
-### Querying Trino
+## Querying Trino
 
 Now that we've set up the Backblaze B2 bucket and application key, lets move to creating a SCHEMA that
 points us to the bucket in Backblaze B2 and then run our CTAS query. When we create a
@@ -234,7 +247,7 @@ in Backblaze B2 when all we specify is the catalog, schema, and table? How does 
 know what columns exist in the orc file, and even the file it is retrieving
 is an orc file to being with? Find out more in the next step.
 
-### Exploring the Hive Metastore
+## Exploring the Hive Metastore
 
 ![Metastore](./assets/metastore.png)
 
@@ -428,7 +441,7 @@ So now you have a working understanding of the Hive metastore and the model
 it uses to store metadata about the files that are generated and written to
 when inserting using the Hive connector. 
 
-### Accessing the Backblaze Drive Stats Data Set
+## Accessing the Backblaze Drive Stats Data Set
 
 [Drive Stats](https://www.backblaze.com/b2/hard-drive-test-data.html) is a public data set of the daily metrics on the hard drives in Backblaze’s cloud storage infrastructure that Backblaze has open-sourced starting with April 2013. Currently, Drive Stats comprises over 346 million records, rising by over 200,000 records per day. Drive Stats is an append-only dataset effectively logging daily statistics that once written are never updated or deleted.
 
@@ -475,27 +488,27 @@ docker container exec -it trino-b2-trino-coordinator-1 trino --catalog b2 --sche
 
 Here are some sample queries to get you started:
 
-#### How many records are in the current Drive Stats data set?
+### How many records are in the current Drive Stats data set?
 ```sql
 SELECT COUNT(*) 
 FROM drivestats;
 ```
 
-#### How many hard drives was Backblaze spinning on a given date?
+### How many hard drives was Backblaze spinning on a given date?
 ```sql
 SELECT COUNT(*) 
 FROM drivestats 
 WHERE year = 2022 AND month = 9 AND day = 30;
 ```
 
-#### How many exabytes of raw storage was Backblaze managing on a given date?
+### How many exabytes of raw storage was Backblaze managing on a given date?
 ```sql
 SELECT ROUND(SUM(CAST(capacity_bytes AS bigint))/1e+18, 2) 
 FROM drivestats 
 WHERE year = 2022 AND month = 9 AND day = 30;
 ```
 
-#### What are the top 10 most common drive models in the data set?
+### What are the top 10 most common drive models in the data set?
 ```sql
 SELECT model, COUNT(DISTINCT serial_number) AS count 
 FROM drivestats 
@@ -504,7 +517,7 @@ ORDER BY count DESC
 LIMIT 10;
 ```
 
-#### How many drives were in the various Backblaze data centers on a given date?
+### How many drives were in the various Backblaze data centers on a given date?
 ```sql
 SELECT datacenter, COUNT(*) AS count
 FROM drivestats
@@ -514,7 +527,7 @@ GROUP BY datacenter;
 
 You can learn more about querying the Drive Stats data set from [Querying a Decade of Drive Stats Data](http://linktbd).
 
-### Stopping Services
+## Stopping Services
 
 Once you're done, the resources used for this exercise can be released
 by running the following command:

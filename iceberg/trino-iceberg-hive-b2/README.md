@@ -5,7 +5,22 @@ This tutorial shows how to use Trino and the [Apache Iceberg](https://iceberg.ap
 
 You'll also learn how to run SQL queries against the real-world [Backblaze Drive Stats](https://www.backblaze.com/b2/hard-drive-test-data.html) public data set.
 
+## Contents
+
+* [Create a Backblaze Account](#create-a-backblaze-account)
+* [Create a Bucket in Backblaze B2](#create-a-bucket-in-backblaze-b2)
+* [Create an Application Key in Backblaze B2](#create-an-application-key-in-backblaze-b2)
+* [Configure Trino](#configure-trino)
+* [Run Trino and its Associated Services](#run-trino-and-its-associated-services)
+* [Open the Trino CLI](#open-the-trino-cli)
+* [Perform DML Operations with Iceberg on Trino](#perform-dml-operations-with-iceberg-on-trino)
+* [Cleanup](#cleanup)
+* [Accessing the Backblaze Drive Stats Data Set](#accessing-the-backblaze-drive-stats-data-set)
+* [Stopping Services](#stopping-services)
+
 ## Create a Backblaze Account
+
+If you do not yet have a Backblaze account, navigate to the [Backblaze B2 signup page](https://www.backblaze.com/b2/sign-up.html?referrer=nopref), enter your email address and a password, and click **Sign Up for Backblaze B2**. Your account includes 10 GB of storage free of charge, and you don't need to submit any credit card details until you need more.
 
 If you already have a Backblaze account with B2 enabled, you can skip to the next section.
 
@@ -15,8 +30,6 @@ If you have a Backblaze account, but you don't see the **B2 Cloud Storage** menu
 <img src="../../hive/trino-b2/assets/enable_b2.png" alt="Enable B2" width="800">
 
 The page will refresh, and you will see the B2 Cloud Storage menu on the left.
-
-If you do not yet have a Backblaze account, navigate to the [Backblaze B2 signup page](https://www.backblaze.com/b2/sign-up.html?referrer=nopref), enter your email address and a password, and click **Sign Up for Backblaze B2**. Your account includes 10 GB of storage free of charge, and you don't need to submit any credit card details until you need more.
 
 ## Create a Bucket in Backblaze B2
 
@@ -379,7 +392,7 @@ In total, each record currently comprises 195 data fields describing the locatio
 
 The entire Backblaze Drive Stats data set is available in Iceberg/Parquet format in a public Backblaze B2 bucket. At the time of writing, the data set comprises 200 files occupying 21.7 GiB of storage.
 
-To access the Drive Stats data set via Trino, follow the [instructions above for configuring Trino](#configuring-trino), with the following configuration values:
+To access the Drive Stats data set via Trino, follow the [instructions above for configuring Trino](#configure-trino), with the following configuration values:
 
 * `APPLICATION_KEY`: `K004Fs/bgmTk5dgo6GAVm2Waj3Ka+TE`
 * `KEY_ID`: `0045f0571db506a0000000017`
@@ -406,27 +419,27 @@ docker container exec -it trino-iceberg-hive-b2-trino-coordinator-1 trino --cata
 
 Here are some sample queries to get you started:
 
-#### How many records are in the current Drive Stats data set?
+### How many records are in the current Drive Stats data set?
 ```sql
 SELECT COUNT(*) 
 FROM drivestats;
 ```
 
-#### How many hard drives was Backblaze spinning on a given date?
+### How many hard drives was Backblaze spinning on a given date?
 ```sql
 SELECT COUNT(*) 
 FROM drivestats 
 WHERE date = DATE '2024-12-31';
 ```
 
-#### How many exabytes of raw storage was Backblaze managing on a given date?
+### How many exabytes of raw storage was Backblaze managing on a given date?
 ```sql
 SELECT ROUND(SUM(CAST(capacity_bytes AS bigint))/1e+18, 2) 
 FROM drivestats 
 WHERE date = DATE '2024-12-31';
 ```
 
-#### What are the top 10 most common drive models in the data set?
+### What are the top 10 most common drive models in the data set?
 ```sql
 SELECT model, COUNT(DISTINCT serial_number) AS count 
 FROM drivestats 
@@ -435,7 +448,7 @@ ORDER BY count DESC
 LIMIT 10;
 ```
 
-#### How many drives were in the various Backblaze data centers on a given date?
+### How many drives were in the various Backblaze data centers on a given date?
 ```sql
 SELECT datacenter, COUNT(*) AS count
 FROM drivestats
@@ -445,7 +458,7 @@ GROUP BY datacenter;
 
 You can learn more about querying the Drive Stats data set from [Querying a Decade of Drive Stats Data](http://linktbd).
 
-### Stopping Services
+## Stopping Services
 
 Once you're done, the resources used for this exercise can be released
 by running the following command:
